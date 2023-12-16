@@ -25,7 +25,7 @@ pipeline {
         // Step 4
         stage('Push docker image') {
                 steps {
-                    withCredentials([string(credentialsId: 'dckr_pat_MG8aqn27lMmQUSMwFRogBMkLpJQ', variable: 'VAR_FOR_DOCKERPASS')]) {
+                    withCredentials([string(credentialsId: 'dckr_pat_fM2OG3Rh8aoHMjjYOuJR6tt-bTU', variable: 'VAR_FOR_DOCKERPASS')]) {
                     sh "sudo docker login -u sagilisurya64 -p $VAR_FOR_DOCKERPASS"
                     }
                     sh "sudo docker push sagilisurya64/javaapp-day6:${BUILD_NUMBER}"
@@ -36,7 +36,7 @@ pipeline {
         stage('Deploy Java App in  Dev Env') {
                 steps {
                         sh "sudo docker rm -f myjavaappdevenv"
-                        sh "sudo docker run  -d -p 1222:8080 --name myjavaappdevenv webdevprashant/javaapp-day6:${BUILD_NUMBER}"
+                        sh "sudo docker run  -d -p 1222:8080 --name myjavaappdevenv sagilisurya64/javaapp-day6:${BUILD_NUMBER}"
                 }
         }
         
@@ -44,10 +44,10 @@ pipeline {
         stage('Deploy Java in QA/Test Env') {
             steps {
                     // sshagent(['QA_ENV_SSH_CRED']) {
-                        // sh "ssh root@192.168.43.229 docker rm -f myjavaapp"
-                        // sh "ssh root@192.168.43.229 docker run  -d -p 8080:8080 --name myjavaapp webdevprashant/javaapp-day6:${BUILD_NUMBER}"
+                        // sh "ssh root@54.221.14.96 docker rm -f myjavaapp"
+                        // sh "ssh root@54.221.14.96 docker run  -d -p 8080:8080 --name myjavaapp webdevprashant/javaapp-day6:${BUILD_NUMBER}"
             sh "sudo docker rm -f myjavaappqatestenv"            
-            sh "sudo docker run  -d -p 1223:8080 --name myjavaappqatestenv webdevprashant/javaapp-day6:${BUILD_NUMBER}"           
+            sh "sudo docker run  -d -p 1223:8080 --name myjavaappqatestenv sagilisurya64/javaapp-day6:${BUILD_NUMBER}"           
                     // }
             }
         }
@@ -56,7 +56,7 @@ pipeline {
             steps {
         	// bcz tomcat take some sec. to display data , so apply some delay here        
                 retry(30) {
-                    sh 'curl --silent http://192.168.43.56:1223/java-web-app/ |  grep India'
+                    sh 'curl --silent http://54.221.14.96:1223/java-web-app/ |  grep India'
                 }   
             }
         }
@@ -66,11 +66,11 @@ pipeline {
             steps {
                
             //   sshagent(['QA_ENV_SSH_CRED']) {                    
-                        // sh "ssh root@192.168.43.229 docker rm -f myjavaapp"
-                        // sh "ssh root@192.168.43.229 docker run  -d -p 8080:8080 --name myjavaapp webdevprashant/javaapp-day6:${BUILD_NUMBER}"                   
+                        // sh "ssh root@54.221.14.96 docker rm -f myjavaapp"
+                        // sh "ssh root@54.221.14.96 docker run  -d -p 8080:8080 --name myjavaapp sagilisurya64/javaapp-day6:${BUILD_NUMBER}"                   
                 // }
                 sh "sudo docker rm -f myjavaappprodenv"
-                sh "sudo docker run  -d -p 1224:8080 --name myjavaappprodenv webdevprashant/javaapp-day6:${BUILD_NUMBER}"  
+                sh "sudo docker run  -d -p 1224:8080 --name myjavaappprodenv sagilisurya64/javaapp-day6:${BUILD_NUMBER}"  
             }
         }
     }
